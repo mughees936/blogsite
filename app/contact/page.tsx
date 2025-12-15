@@ -8,7 +8,7 @@ const socials = [
 	{
 		icon: <Linkedin size={20} />,
 		href: "https://linkedin.com/in/abdul-mughees",
-		label: "Twitter",
+		label: "LinkedIn",
 		handle: "@abdul-mughees",
 	},
 	{
@@ -19,7 +19,7 @@ const socials = [
 	},
 	{
 		icon: <Github size={20} />,
-		href: "https://github.com/mughis369",
+		href: "https://github.com/mughees936",
 		label: "Github",
 		handle: "mughees",
 	},

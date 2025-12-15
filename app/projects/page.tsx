@@ -2,27 +2,41 @@ import Link from "next/link";
 import React from "react";
 import { allProjects } from "contentlayer/generated";
 import { Navigation } from "../components/nav";
-import { Card } from "../components/card";
-import { Article } from "./article";
 import { Redis } from "@upstash/redis";
 import { Eye } from "lucide-react";
-
-const redis = Redis.fromEnv();
+import { Card } from "../components/card";
+import { Article } from "./article";
 
 export const revalidate = 60;
 export default async function ProjectsPage() {
-  const views = (
-    await redis.mget<number[]>(
-      ...allProjects.map((p) => ["pageviews", "projects", p.slug].join(":")),
-    )
-  ).reduce((acc, v, i) => {
-    acc[allProjects[i].slug] = v ?? 0;
-    return acc;
-  }, {} as Record<string, number>);
+  let views: Record<string, number> = {};
 
-  const featured = allProjects.find((project) => project.slug === "unkey")!;
-  const top2 = allProjects.find((project) => project.slug === "planetfall")!;
-  const top3 = allProjects.find((project) => project.slug === "highstorm")!;
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (redisUrl && redisToken) {
+    const redis = new Redis({
+      url: redisUrl,
+      token: redisToken,
+    });
+
+    try {
+      views = (
+        await redis.mget<number[]>(
+          ...allProjects.map((p) => ["pageviews", "projects", p.slug].join(":")),
+        )
+      ).reduce((acc, v, i) => {
+        acc[allProjects[i].slug] = v ?? 0;
+        return acc;
+      }, {} as Record<string, number>);
+    } catch (error) {
+      console.error("Failed to fetch views from Redis:", error);
+    }
+  }
+
+  const featured = allProjects.find((project) => project.slug === "gsl_cloud")!;
+  const top2 = allProjects.find((project) => project.slug === "skyelectric")!;
+  const top3 = allProjects.find((project) => project.slug === "video-conferencing")!;
   const sorted = allProjects
     .filter((p) => p.published)
     .filter(

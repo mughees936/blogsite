@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: "mughis.mirza",
+    title: "abdul-mughees",
     card: "summary_large_image",
   },
   icons: {
